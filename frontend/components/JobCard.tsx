@@ -8,9 +8,11 @@ import type { Job } from "@/lib/types";
 export function JobCard({
   job,
   onTrack,
+  isTracked = false,
 }: {
   job: Job;
   onTrack: (job: Job) => void;
+  isTracked?: boolean;
 }) {
   const salary =
     job.salary_min && job.salary_max
@@ -25,6 +27,7 @@ export function JobCard({
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <div className="flex flex-wrap gap-2">
+          {isTracked && <Badge>Tracked</Badge>}
           {job.remote && <Badge variant="secondary">Remote</Badge>}
           {job.location && <Badge variant="outline">{job.location}</Badge>}
           {salary && <Badge variant="outline">{salary}</Badge>}
@@ -38,8 +41,13 @@ export function JobCard({
           >
             View listing
           </a>
-          <Button size="sm" onClick={() => onTrack(job)}>
-            Track this job
+          <Button
+            size="sm"
+            variant={isTracked ? "outline" : "default"}
+            disabled={isTracked}
+            onClick={() => onTrack(job)}
+          >
+            {isTracked ? "Tracked" : "Track this job"}
           </Button>
         </div>
       </CardContent>

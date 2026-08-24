@@ -14,6 +14,22 @@ router = APIRouter(prefix="/auth")
 COOKIE_MAX_AGE_SECONDS = 7 * 24 * 60 * 60
 
 
+def session_cookie_attributes() -> dict:
+    """Cookie flags for the session cookie.
+
+    Deployed, the frontend and the backend sit on different registrable
+    domains, so every authenticated call is a cross-site subresource request:
+    the cookie only travels with SameSite=None, which browsers accept only
+    alongside Secure. Locally both halves share localhost, where Lax works and
+    Secure would stop the cookie being stored over plain http.
+    """
+    local = settings.is_local_frontend
+    return {
+        "samesite": "lax" if local else "none",
+        "secure": not local,
+    }
+
+
 @router.get("/google/login")
 async def google_login(request: Request):
     redirect_uri = str(request.url_for("google_callback"))
@@ -44,9 +60,8 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
         key="session",
         value=access_token,
         httponly=True,
-        samesite="lax",
-        secure=not settings.frontend_url.startswith("http://localhost"),
         max_age=COOKIE_MAX_AGE_SECONDS,
+        **session_cookie_attributes(),
     )
     return response
 
@@ -59,5 +74,9 @@ def me(user: User = Depends(get_current_user)):
 @router.post("/logout")
 def logout():
     response = RedirectResponse(url=settings.frontend_url)
-    response.delete_cookie("session")
+    # Browsers only drop a cookie when the clearing attributes match the ones
+    # it was set with, so reuse the same samesite/secure pair here.
+    response.delete_cookie(
+        "session", httponly=True, **session_cookie_attributes()
+    )
     return response

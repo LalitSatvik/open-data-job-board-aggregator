@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-from app.database import SessionLocal
 from app.models import Job
 from app.schemas.job import NormalizedJob
 from app.services.ingest import run_ingest

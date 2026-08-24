@@ -6,8 +6,8 @@ from app.auth.jwt import create_access_token
 from app.models import User
 
 
-def _login(client, db):
-    user = User(email="a@example.com", name="A", google_sub="sub-1")
+def _login(client, db, email="a@example.com", name="A", google_sub="sub-1"):
+    user = User(email=email, name=name, google_sub=google_sub)
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -36,6 +36,32 @@ def test_export_json_includes_history(client):
     data = json.loads(response.content)
     assert len(data) == 1
     assert len(data[0]["history"]) == 2
+
+
+def test_export_requires_a_session(client):
+    assert client.get("/export", params={"format": "json"}).status_code == 401
+
+
+def test_export_only_includes_the_current_users_applications(client):
+    import app.main as main_module
+
+    db = _get_db(main_module)
+
+    _login(client, db, email="a@example.com", google_sub="sub-1")
+    client.post("/applications", json={"status": "saved", "notes": "mine"})
+
+    _login(client, db, email="b@example.com", name="B", google_sub="sub-2")
+    client.post("/applications", json={"status": "applied", "notes": "theirs"})
+
+    user_a = db.query(User).filter_by(email="a@example.com").one()
+    client.cookies.set("session", create_access_token(user_id=user_a.id))
+
+    response = client.get("/export", params={"format": "json"})
+    assert response.status_code == 200
+    data = json.loads(response.content)
+    assert len(data) == 1
+    assert data[0]["notes"] == "mine"
+    assert "theirs" not in response.content.decode()
 
 
 def test_export_csv_has_history_column(client):

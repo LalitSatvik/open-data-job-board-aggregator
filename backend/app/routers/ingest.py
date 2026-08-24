@@ -1,3 +1,5 @@
+import hmac
+
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
 
@@ -13,6 +15,8 @@ def ingest(
     db: Session = Depends(get_db),
     x_ingest_secret: str = Header(default=""),
 ):
-    if x_ingest_secret != settings.ingest_secret:
+    if not hmac.compare_digest(
+        x_ingest_secret.encode("utf-8"), settings.ingest_secret.encode("utf-8")
+    ):
         raise HTTPException(status_code=401, detail="Invalid ingest secret")
     return run_ingest(db)

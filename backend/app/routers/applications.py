@@ -13,12 +13,12 @@ router = APIRouter()
 
 class ApplicationCreate(BaseModel):
     job_id: Optional[int] = None
-    status: str = ApplicationStatus.SAVED.value
+    status: ApplicationStatus = ApplicationStatus.SAVED
     notes: Optional[str] = None
 
 
 class ApplicationUpdate(BaseModel):
-    status: Optional[str] = None
+    status: Optional[ApplicationStatus] = None
     notes: Optional[str] = None
 
 
@@ -94,21 +94,24 @@ def create_application(
     application = Application(
         user_id=user.id,
         job_id=payload.job_id,
-        status=payload.status,
+        status=payload.status.value,
         notes=payload.notes,
     )
     db.add(application)
-    db.commit()
-    db.refresh(application)
+    # Flush (not commit) so the application gets its id while the initial
+    # history row still lands in the same transaction: an application without
+    # its opening history row would break the whole history feature.
+    db.flush()
 
     db.add(
         StatusHistory(
             application_id=application.id,
             from_status=None,
-            to_status=payload.status,
+            to_status=payload.status.value,
         )
     )
     db.commit()
+    db.refresh(application)
 
     return serialize_application(application, db)
 
@@ -125,15 +128,15 @@ def update_application(
     if payload.notes is not None:
         application.notes = payload.notes
 
-    if payload.status is not None and payload.status != application.status:
+    if payload.status is not None and payload.status.value != application.status:
         db.add(
             StatusHistory(
                 application_id=application.id,
                 from_status=application.status,
-                to_status=payload.status,
+                to_status=payload.status.value,
             )
         )
-        application.status = payload.status
+        application.status = payload.status.value
 
     db.commit()
     db.refresh(application)

@@ -2,8 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
+from app.routers import ingest as ingest_router
 
 app = FastAPI(title="Open Data Job Board Aggregator")
+
+app.include_router(ingest_router.router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -40,7 +40,7 @@ function Column({
       }`}
     >
       <h2 className="text-sm font-semibold">{stage.label}</h2>
-      <div className="flex flex-col gap-2">
+      <div className="flex min-h-16 flex-col gap-2">
         {applications.map((application) => (
           <ApplicationCard
             key={application.id}
@@ -48,6 +48,11 @@ function Column({
             onOpen={onOpen}
           />
         ))}
+        {applications.length === 0 && (
+          <p className="rounded-lg border border-dashed p-3 text-center text-xs text-muted-foreground">
+            No applications
+          </p>
+        )}
       </div>
     </div>
   );

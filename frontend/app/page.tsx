@@ -20,6 +20,7 @@ export default function JobBoardPage() {
   const { user, loading } = useSession();
   const [filters, setFilters] = useState<JobFilterState>(EMPTY_FILTERS);
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobsLoading, setJobsLoading] = useState(true);
   const [trackedIds, setTrackedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
@@ -34,9 +35,11 @@ export default function JobBoardPage() {
     if (filters.remote !== "any") params.set("remote", filters.remote);
     if (filters.salaryMin) params.set("salary_min", filters.salaryMin);
 
-    apiGet<JobsResponse>(`/jobs?${params.toString()}`).then((res) =>
-      setJobs(res.items)
-    );
+    setJobsLoading(true);
+    apiGet<JobsResponse>(`/jobs?${params.toString()}`).then((res) => {
+      setJobs(res.items);
+      setJobsLoading(false);
+    });
   }, [user, filters]);
 
   async function handleTrack(job: Job) {
@@ -64,7 +67,10 @@ export default function JobBoardPage() {
           />
         ))}
       </div>
-      {jobs.length === 0 && (
+      {jobsLoading && (
+        <p className="text-sm text-muted-foreground">Loading jobs…</p>
+      )}
+      {!jobsLoading && jobs.length === 0 && (
         <p className="text-sm text-muted-foreground">
           No jobs match these filters yet.
         </p>

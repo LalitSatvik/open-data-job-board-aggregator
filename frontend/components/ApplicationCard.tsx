@@ -29,7 +29,7 @@ export function ApplicationCard({
       {...listeners}
       {...attributes}
       onClick={() => onOpen(application)}
-      className="cursor-grab active:cursor-grabbing"
+      className="cursor-grab ring-foreground/10 transition-shadow hover:ring-foreground/20 active:cursor-grabbing"
     >
       <CardContent className="p-3">
         <p className="text-sm font-medium">

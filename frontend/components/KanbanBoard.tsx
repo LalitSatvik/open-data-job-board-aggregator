@@ -8,7 +8,9 @@ import {
   type DragEndEvent,
   useDroppable,
 } from "@dnd-kit/core";
+import { LayoutGroup } from "motion/react";
 import { ApplicationCard } from "@/components/ApplicationCard";
+import { cn } from "@/lib/utils";
 import type { Application } from "@/lib/types";
 
 const STAGES: { key: string; label: string }[] = [
@@ -35,11 +37,17 @@ function Column({
   return (
     <div
       ref={setNodeRef}
-      className={`flex min-w-[220px] flex-col gap-2 rounded-lg border p-3 ${
-        isOver ? "bg-muted" : ""
-      }`}
+      className={cn(
+        "glass-panel flex min-w-[260px] flex-col gap-2 rounded-2xl p-3 transition-colors duration-200",
+        isOver && "bg-white/70"
+      )}
     >
-      <h2 className="text-sm font-semibold">{stage.label}</h2>
+      <div className="flex items-center justify-between px-1">
+        <h2 className="text-sm font-semibold">{stage.label}</h2>
+        <span className="glass-pill flex size-5 items-center justify-center rounded-full text-[0.7rem] font-medium text-muted-foreground">
+          {applications.length}
+        </span>
+      </div>
       <div className="flex min-h-16 flex-col gap-2">
         {applications.map((application) => (
           <ApplicationCard
@@ -49,7 +57,7 @@ function Column({
           />
         ))}
         {applications.length === 0 && (
-          <p className="rounded-lg border border-dashed p-3 text-center text-xs text-muted-foreground">
+          <p className="rounded-xl border border-dashed border-border/70 p-3 text-center text-xs text-muted-foreground">
             No applications
           </p>
         )}
@@ -82,16 +90,18 @@ export function KanbanBoard({
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-      <div className="flex gap-3 overflow-x-auto pb-4">
-        {STAGES.map((stage) => (
-          <Column
-            key={stage.key}
-            stage={stage}
-            applications={applications.filter((a) => a.status === stage.key)}
-            onOpen={onOpen}
-          />
-        ))}
-      </div>
+      <LayoutGroup>
+        <div className="flex gap-3 overflow-x-auto pb-4">
+          {STAGES.map((stage) => (
+            <Column
+              key={stage.key}
+              stage={stage}
+              applications={applications.filter((a) => a.status === stage.key)}
+              onOpen={onOpen}
+            />
+          ))}
+        </div>
+      </LayoutGroup>
     </DndContext>
   );
 }

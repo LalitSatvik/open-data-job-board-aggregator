@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "motion/react";
+import { BookmarkCheck, Globe, Search } from "lucide-react";
 import { apiGet, apiPost } from "@/lib/api";
 import { useSession } from "@/lib/useSession";
 import { Button } from "@/components/ui/button";
+import { AppShell } from "@/components/AppShell";
+import { StatTile } from "@/components/StatTile";
 import { JobCard } from "@/components/JobCard";
 import { JobFilters, type JobFilterState } from "@/components/JobFilters";
 import type { Job, JobsResponse } from "@/lib/types";
@@ -17,6 +21,16 @@ const EMPTY_FILTERS: JobFilterState = {
 };
 
 const PAGE_SIZE = 20;
+
+const gridVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0 },
+};
 
 export default function JobBoardPage() {
   const router = useRouter();
@@ -82,26 +96,61 @@ export default function JobBoardPage() {
   const firstResult = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const lastResult = Math.min(page * PAGE_SIZE, total);
   const hasNextPage = page * PAGE_SIZE < total;
+  const remoteOnPage = jobs.filter((job) => job.remote).length;
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Job Board</h1>
-        <a href="/tracker" className="text-sm underline underline-offset-4">
-          Go to tracker
-        </a>
+    <AppShell user={user}>
+      <div className="flex flex-col gap-1">
+        <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+          Job Board
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Search open roles pulled from every source we track.
+        </p>
       </div>
-      <JobFilters value={filters} onChange={handleFiltersChange} />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <StatTile label="Results" value={total} icon={Search} delay={0} />
+        <StatTile
+          label="Remote (this page)"
+          value={remoteOnPage}
+          icon={Globe}
+          delay={0.05}
+        />
+        <StatTile
+          label="Tracked"
+          value={trackedIds.size}
+          icon={BookmarkCheck}
+          delay={0.1}
+        />
+      </div>
+
+      <div className="glass-panel rounded-2xl p-4">
+        <JobFilters value={filters} onChange={handleFiltersChange} />
+      </div>
+
+      <motion.div
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        initial="hidden"
+        animate="show"
+        variants={gridVariants}
+      >
         {jobs.map((job) => (
-          <JobCard
+          <motion.div
             key={job.id}
-            job={job}
-            isTracked={trackedIds.has(job.id)}
-            onTrack={handleTrack}
-          />
+            variants={cardVariants}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            whileHover={{ y: -4 }}
+          >
+            <JobCard
+              job={job}
+              isTracked={trackedIds.has(job.id)}
+              onTrack={handleTrack}
+            />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
+
       {jobsLoading && (
         <p className="text-sm text-muted-foreground">Loading jobs…</p>
       )}
@@ -112,7 +161,7 @@ export default function JobBoardPage() {
         </p>
       )}
       {!error && total > 0 && (
-        <div className="flex items-center justify-between">
+        <div className="glass-panel flex items-center justify-between rounded-2xl px-4 py-3">
           <p className="text-sm text-muted-foreground">
             Showing {firstResult}–{lastResult} of {total}
           </p>
@@ -136,6 +185,6 @@ export default function JobBoardPage() {
           </div>
         </div>
       )}
-    </main>
+    </AppShell>
   );
 }

@@ -20,24 +20,24 @@ export function JobCard({
       : null;
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
-        <CardTitle className="text-base">{job.title}</CardTitle>
+        <CardTitle className="text-base font-semibold">{job.title}</CardTitle>
         <p className="text-sm text-muted-foreground">{job.company}</p>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {isTracked && <Badge>Tracked</Badge>}
           {job.remote && <Badge variant="secondary">Remote</Badge>}
           {job.location && <Badge variant="outline">{job.location}</Badge>}
           {salary && <Badge variant="outline">{salary}</Badge>}
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <a
             href={job.url}
             target="_blank"
             rel="noreferrer"
-            className="text-sm underline underline-offset-4"
+            className="text-sm font-medium text-navy underline-offset-4 hover:underline"
           >
             View listing
           </a>

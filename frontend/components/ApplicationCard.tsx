@@ -1,7 +1,7 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
-import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "motion/react";
 import type { Application } from "@/lib/types";
 
 export function ApplicationCard({
@@ -11,34 +11,36 @@ export function ApplicationCard({
   application: Application;
   onOpen: (application: Application) => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: application.id,
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({ id: application.id });
 
-  const style = transform
+  const dragStyle = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        zIndex: 10,
+        zIndex: 20,
       }
     : undefined;
 
   return (
-    <Card
+    <motion.div
       ref={setNodeRef}
-      style={style}
+      layoutId={`application-${application.id}`}
+      layout={!isDragging}
+      style={dragStyle}
       {...listeners}
       {...attributes}
       onClick={() => onOpen(application)}
-      className="cursor-grab ring-foreground/10 transition-shadow hover:ring-foreground/20 active:cursor-grabbing"
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 420, damping: 34 }}
+      className="glass-panel cursor-grab rounded-xl px-3 py-2.5 active:cursor-grabbing"
     >
-      <CardContent className="p-3">
-        <p className="text-sm font-medium">
-          {application.job?.title ?? "Untitled application"}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {application.job?.company ?? ""}
-        </p>
-      </CardContent>
-    </Card>
+      <p className="text-sm font-medium">
+        {application.job?.title ?? "Untitled application"}
+      </p>
+      <p className="text-xs text-muted-foreground">
+        {application.job?.company ?? ""}
+      </p>
+    </motion.div>
   );
 }

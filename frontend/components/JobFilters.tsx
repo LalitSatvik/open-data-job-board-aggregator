@@ -1,5 +1,6 @@
 "use client";
 
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -25,11 +26,15 @@ export function JobFilters({
 }) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-      <Input
-        placeholder="Search title or company"
-        value={value.q}
-        onChange={(e) => onChange({ ...value, q: e.target.value })}
-      />
+      <div className="relative sm:col-span-2">
+        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search title or company"
+          value={value.q}
+          onChange={(e) => onChange({ ...value, q: e.target.value })}
+          className="pl-9"
+        />
+      </div>
       <Input
         placeholder="Location"
         value={value.location}
@@ -39,7 +44,7 @@ export function JobFilters({
         value={value.remote}
         onValueChange={(remote) => onChange({ ...value, remote: remote ?? "any" })}
       >
-        <SelectTrigger>
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Remote?" />
         </SelectTrigger>
         <SelectContent>

@@ -45,11 +45,15 @@ export function ApplicationDetailDialog({
           <div>
             <h3 className="mb-2 text-sm font-medium">Status history</h3>
             {application.history.length > 0 ? (
-              <ul className="flex flex-col gap-1 text-sm text-muted-foreground">
+              <ul className="flex flex-col gap-2 border-l border-border/70 pl-3 text-sm">
                 {application.history.map((entry, i) => (
-                  <li key={i}>
-                    {entry.from_status ?? "start"} → {entry.to_status} (
-                    {new Date(entry.changed_at).toLocaleString()})
+                  <li key={i} className="relative text-muted-foreground">
+                    <span className="absolute -left-[1.05rem] top-1.5 size-1.5 rounded-full bg-navy" />
+                    <span className="font-medium text-foreground">
+                      {entry.from_status ?? "start"} → {entry.to_status}
+                    </span>
+                    <br />
+                    {new Date(entry.changed_at).toLocaleString()}
                   </li>
                 ))}
               </ul>

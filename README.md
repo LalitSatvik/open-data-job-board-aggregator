@@ -108,3 +108,7 @@ is ever committed to this repo.
 5. Click a card to show its status-history timeline and add a note.
 6. Click "Export CSV" (and/or "Export JSON") to show the downloaded
    pipeline, including the history trail.
+
+## License
+
+[MIT](LICENSE)

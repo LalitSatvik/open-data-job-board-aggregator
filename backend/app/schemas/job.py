@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -9,10 +8,10 @@ class NormalizedJob(BaseModel):
     source_id: str
     title: str
     company: str
-    location: Optional[str] = None
+    location: str | None = None
     remote: bool = False
-    salary_min: Optional[int] = None
-    salary_max: Optional[int] = None
+    salary_min: int | None = None
+    salary_max: int | None = None
     url: str
-    description: Optional[str] = None
-    posted_at: Optional[datetime] = None
+    description: str | None = None
+    posted_at: datetime | None = None

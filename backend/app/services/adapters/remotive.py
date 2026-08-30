@@ -1,6 +1,5 @@
 import logging
 import re
-from typing import List, Optional
 
 import httpx
 
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 REMOTIVE_URL = "https://remotive.com/api/remote-jobs"
 
 
-def _parse_salary(raw: Optional[str]):
+def _parse_salary(raw: str | None):
     if not raw:
         return None, None
     numbers = [int(n.replace(",", "")) for n in re.findall(r"[\d,]{3,}", raw)]
@@ -22,7 +21,7 @@ def _parse_salary(raw: Optional[str]):
     return min(numbers), max(numbers)
 
 
-def fetch_remotive() -> List[NormalizedJob]:
+def fetch_remotive() -> list[NormalizedJob]:
     try:
         response = httpx.get(REMOTIVE_URL, timeout=10)
         response.raise_for_status()

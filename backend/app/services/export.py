@@ -1,10 +1,9 @@
 import csv
 import io
 import json
-from typing import List
 
 
-def _history_str(history: List[dict]) -> str:
+def _history_str(history: list[dict]) -> str:
     parts = []
     for h in history:
         from_label = h["from_status"] or "start"
@@ -12,11 +11,11 @@ def _history_str(history: List[dict]) -> str:
     return "; ".join(parts)
 
 
-def to_json(applications: List[dict]) -> str:
+def to_json(applications: list[dict]) -> str:
     return json.dumps(applications, default=str)
 
 
-def to_csv(applications: List[dict]) -> str:
+def to_csv(applications: list[dict]) -> str:
     output = io.StringIO()
     fieldnames = [
         "id", "job_title", "company", "status", "notes",

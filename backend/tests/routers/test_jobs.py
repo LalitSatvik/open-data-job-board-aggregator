@@ -18,8 +18,8 @@ def _seed_jobs(db):
 
 
 def test_jobs_search_by_query(client):
-    from app.database import get_db
     import app.main as main_module
+    from app.database import get_db
 
     db = next(main_module.app.dependency_overrides[get_db]())
     _seed_jobs(db)
@@ -34,8 +34,8 @@ def test_jobs_search_by_query(client):
 
 
 def test_jobs_filter_by_remote_and_salary(client):
-    from app.database import get_db
     import app.main as main_module
+    from app.database import get_db
 
     db = next(main_module.app.dependency_overrides[get_db]())
     _seed_jobs(db)
@@ -49,8 +49,8 @@ def test_jobs_filter_by_remote_and_salary(client):
 
 
 def test_jobs_filter_salary_range_overlap(client):
-    from app.database import get_db
     import app.main as main_module
+    from app.database import get_db
 
     db = next(main_module.app.dependency_overrides[get_db]())
     _seed_jobs(db)
@@ -65,8 +65,8 @@ def test_jobs_filter_salary_range_overlap(client):
 
 
 def test_jobs_pagination(client):
-    from app.database import get_db
     import app.main as main_module
+    from app.database import get_db
 
     db = next(main_module.app.dependency_overrides[get_db]())
     _seed_jobs(db)

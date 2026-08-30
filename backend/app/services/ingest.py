@@ -1,4 +1,3 @@
-from typing import List
 
 from sqlalchemy.orm import Session
 
@@ -13,7 +12,7 @@ MIN_TOTAL_BEFORE_FALLBACK = 5
 FALLBACK_TARGET_TOTAL = 20
 
 
-def _upsert(db: Session, jobs: List[NormalizedJob]) -> int:
+def _upsert(db: Session, jobs: list[NormalizedJob]) -> int:
     count = 0
     for job in jobs:
         existing = (
@@ -38,7 +37,7 @@ def run_ingest(db: Session) -> dict:
     arbeitnow_jobs = fetch_arbeitnow()
 
     combined = remotive_jobs + remoteok_jobs + arbeitnow_jobs
-    synthetic_jobs: List[NormalizedJob] = []
+    synthetic_jobs: list[NormalizedJob] = []
     if len(combined) < MIN_TOTAL_BEFORE_FALLBACK:
         needed = max(FALLBACK_TARGET_TOTAL - len(combined), 0)
         synthetic_jobs = generate_synthetic_jobs(needed)

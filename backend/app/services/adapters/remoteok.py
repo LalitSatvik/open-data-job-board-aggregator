@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 import httpx
 
@@ -12,7 +11,7 @@ REMOTEOK_URL = "https://remoteok.com/api"
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; JobBoardAggregator/1.0)"}
 
 
-def fetch_remoteok() -> List[NormalizedJob]:
+def fetch_remoteok() -> list[NormalizedJob]:
     try:
         response = httpx.get(REMOTEOK_URL, headers=HEADERS, timeout=10)
         response.raise_for_status()

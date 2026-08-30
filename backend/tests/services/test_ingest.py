@@ -13,8 +13,8 @@ def _job(source, source_id, title="Engineer"):
 
 
 def test_run_ingest_upserts_and_dedupes(client):
-    from app.database import get_db
     import app.main as main_module
+    from app.database import get_db
 
     db = next(main_module.app.dependency_overrides[get_db]())
 
@@ -53,8 +53,8 @@ def test_run_ingest_upserts_and_dedupes(client):
 
 
 def test_run_ingest_falls_back_to_synthetic_when_sparse(client):
-    from app.database import get_db
     import app.main as main_module
+    from app.database import get_db
 
     db = next(main_module.app.dependency_overrides[get_db]())
 

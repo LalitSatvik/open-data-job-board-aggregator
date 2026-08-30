@@ -1,4 +1,3 @@
-from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import or_
@@ -30,11 +29,11 @@ def _serialize(job: Job) -> dict:
 
 @router.get("/jobs")
 def list_jobs(
-    q: Optional[str] = None,
-    location: Optional[str] = None,
-    remote: Optional[bool] = None,
-    salary_min: Optional[int] = None,
-    salary_max: Optional[int] = None,
+    q: str | None = None,
+    location: str | None = None,
+    remote: bool | None = None,
+    salary_min: int | None = None,
+    salary_max: int | None = None,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=MAX_PAGE_SIZE),
     db: Session = Depends(get_db),

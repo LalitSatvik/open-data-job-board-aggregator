@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta, timezone
-from typing import List
+from datetime import UTC, datetime, timedelta
 
 from app.schemas.job import NormalizedJob
 
@@ -23,9 +22,9 @@ COMPANIES = [
 LOCATIONS = ["Remote", "New York, NY", "Austin, TX", "Berlin, DE", "London, UK"]
 
 
-def generate_synthetic_jobs(n: int) -> List[NormalizedJob]:
+def generate_synthetic_jobs(n: int) -> list[NormalizedJob]:
     jobs = []
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     for i in range(n):
         title = TITLES[i % len(TITLES)]
         company = COMPANIES[i % len(COMPANIES)]

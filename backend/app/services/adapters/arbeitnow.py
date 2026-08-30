@@ -1,6 +1,5 @@
 import logging
-from datetime import datetime, timezone
-from typing import List
+from datetime import UTC, datetime
 
 import httpx
 
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 ARBEITNOW_URL = "https://www.arbeitnow.com/api/job-board-api"
 
 
-def fetch_arbeitnow() -> List[NormalizedJob]:
+def fetch_arbeitnow() -> list[NormalizedJob]:
     try:
         response = httpx.get(ARBEITNOW_URL, timeout=10)
         response.raise_for_status()
@@ -20,7 +19,7 @@ def fetch_arbeitnow() -> List[NormalizedJob]:
         for raw in payload.get("data", []):
             created_at = raw.get("created_at")
             posted_at = (
-                datetime.fromtimestamp(created_at, tz=timezone.utc)
+                datetime.fromtimestamp(created_at, tz=UTC)
                 if isinstance(created_at, (int, float))
                 else None
             )

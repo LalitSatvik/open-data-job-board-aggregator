@@ -17,8 +17,8 @@ def test_me_requires_session_cookie(client):
 
 
 def test_me_returns_current_user(client):
-    from app.database import get_db
     import app.main as main_module
+    from app.database import get_db
 
     db = next(main_module.app.dependency_overrides[get_db]())
     user = _create_user(db)

@@ -1,4 +1,3 @@
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -12,17 +11,17 @@ router = APIRouter()
 
 
 class ApplicationCreate(BaseModel):
-    job_id: Optional[int] = None
+    job_id: int | None = None
     status: ApplicationStatus = ApplicationStatus.SAVED
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class ApplicationUpdate(BaseModel):
-    status: Optional[ApplicationStatus] = None
-    notes: Optional[str] = None
+    status: ApplicationStatus | None = None
+    notes: str | None = None
 
 
-def _serialize_job(job: Optional[Job]) -> Optional[dict]:
+def _serialize_job(job: Job | None) -> dict | None:
     if job is None:
         return None
     return {

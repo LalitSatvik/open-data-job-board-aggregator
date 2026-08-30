@@ -2,9 +2,11 @@ from app.models import Application, ApplicationStatus, Job, StatusHistory, User
 
 
 def test_create_user_job_application_history(client):
-    from app.database import SessionLocal  # noqa: F401 (ensures import works)
     import app.main as main_module
-    from app.database import get_db
+    from app.database import (
+        SessionLocal,  # noqa: F401 (ensures import works)
+        get_db,
+    )
 
     db = next(main_module.app.dependency_overrides[get_db]())
 
